@@ -18,7 +18,7 @@ function get_topmost_parent_id($post_id){
 /**
  * Loops through dates and creates new posts
  */
-function create_repeating_posts($post, $days, $start_date, $end_date){
+function create_repeating_posts($post, $days, $start_date, $end_date, $publish_immediately){
   // error_log('[create_repeating_posts] Template: '.$post->ID);
 
   // We don't want to clone revisions
@@ -54,12 +54,24 @@ function create_repeating_posts($post, $days, $start_date, $end_date){
     'post_date_gmt' => $date->format('Y-m-d '.'00:00:00'),
     );
 
+    // If immediately publish is set, set publish date to be today
+    // error_log("[publish_immediately]".$publish_immediately);
+    if ( $publish_immediately == 'on' ) {
+      $tmp = new DateTime;
+      $new_post['post_date'] = $tmp->format('Y-m-d '.'00:00:00');
+      $new_post['post_date_gmt'] = $tmp->format('Y-m-d '.'00:00:00');
+    }
+
     $new_post_id = wp_insert_post($new_post, true);
 
     // error_log('New Post ID: '.$new_post_id.' :: '.$post->post_type);
 
+    // Update custom date field
+    // error_log("[date_of_event]".$post->custom_date);
+    update_post_meta($new_post_id, 'custom_date', $date->format('Y/m/d'));
+
     $date = $date->add($interval);
-  } while ($date < $end_date);
+  } while ($date <= $end_date);
 
   // re-hook this function
   add_action('save_post', 'repeating_post_save_as_new_post');
@@ -87,6 +99,7 @@ function repeating_post_save_as_new_post( $post_id ) {
   $days = $_POST['repeating-post-days'];
   $start_date = $_POST['repeating-post-start-date'];
   $end_date = $_POST['repeating-post-end-date'];
+  $publish_immediately = $_POST['repeating-post-publish-immediately'];
   // error_log("empty date: ".empty($date));
   // error_log("empty days: ".empty($days));
 
@@ -101,7 +114,7 @@ function repeating_post_save_as_new_post( $post_id ) {
   // Copy the post and insert it
   if (isset($post) && $post!=null)
   {
-    $result = create_repeating_posts($post, $days, $start_date, $end_date);
+    $result = create_repeating_posts($post, $days, $start_date, $end_date, $publish_immediately);
 
     wp_redirect( admin_url( '/edit.php?post_type='.$post->post_type) );
     exit;
@@ -109,39 +122,6 @@ function repeating_post_save_as_new_post( $post_id ) {
 }
 
 add_action( 'save_post', 'repeating_post_save_as_new_post' );
-
-/**
- * Retrieve duplicate post link for post.
- *
- *
- * @param int $id Optional. Post ID.
- * @param string $context Optional, default to display. How to write the '&', defaults to '&amp;'.
- * @param string $draft Optional, default to true
- * @return string
- */
-function repeating_post_get_clone_post_link( $id = 0, $context = 'display', $draft = true ) {
-  
-  if ( !$post = &get_post( $id ) )
-  return;
-
-  if ($draft)
-  $action_name = "repeating_post_save_as_new_post_draft";
-  else
-  $action_name = "repeating_post_save_as_new_post";
-
-  if ( 'display' == $context )
-  $action = '?action='.$action_name.'&amp;post='.$post->ID;
-  else
-  $action = '?action='.$action_name.'&post='.$post->ID;
-
-  $post_type_object = get_post_type_object( $post->post_type );
-  if ( !$post_type_object )
-  return;
-
-  return apply_filters( 'repeating_post_get_clone_post_link', admin_url( "admin.php". $action ), $post->ID, $context );
-}
-
-add_action('admin_action_repeating_post_save_as_new_post', 'repeating_post_save_as_new_post', 10, 3);
 
 /**
  * Calls the class on the post edit screen
@@ -198,7 +178,6 @@ class repeating_post_meta_box
 
       wp_register_script( 'repeating-post-scripts', plugins_url() . '/repeating-post/repeating-post-scripts.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker' ) );
       wp_enqueue_script( 'repeating-post-scripts' );
-      $repeating_post_get_clone_post_link = repeating_post_get_clone_post_link();
       require_once('repeating-post-view.php');
     }
 }
