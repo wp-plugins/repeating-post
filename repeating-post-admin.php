@@ -103,7 +103,7 @@ function repeating_post_save_as_new_post( $post_id ) {
   {
     $result = create_repeating_posts($post, $days, $start_date, $end_date);
 
-    wp_redirect( admin_url( '/edit.php') );
+    wp_redirect( admin_url( '/edit.php?post_type='.$post->post_type) );
     exit;
   }
 }
@@ -171,14 +171,20 @@ class repeating_post_meta_box
      */
     public function add_some_meta_box()
     {
+      $post_types = get_post_types( array( 'public' => true ) );
+      foreach ( $post_types as $post_type )
+      {
+        if ( 'page' == $post_type )
+          continue;
         add_meta_box( 
-             'some_meta_box_name'
-            ,__( 'Repeating Post', self::LANG )
-            ,array( &$this, 'render_meta_box_content' )
-            ,'post' 
-            ,'advanced'
-            ,'high'
+          'repeating-post-meta-box',
+          __( 'Repeating Post', self::LANG ),
+          array( &$this, 'render_meta_box_content' ),
+          $post_type,
+          'advanced',
+          'high'
         );
+      }
     }
 
 
