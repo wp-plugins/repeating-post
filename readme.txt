@@ -4,7 +4,7 @@ Donate link: http://shynnergy.com/
 Tags: repeating, repeat, posts, post, repeat, schedule, repeating-posts
 Requires at least: 3.5.1
 Tested up to: 3.5.1
-Stable tag: 0.1
+Stable tag: 0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,15 @@ However, since the posts are scheduled to be published in advance, you can then 
 2. Date picker!  You picker you!
 
 == Changelog ==
+
+= 0.2 =
+
+Now works with custom post types
+
+For events (custom post type):
+
+* Ability to publish post immediately - allows you to announce the event right away, even though the event is in the future
+* Updates a custom meta field - custom_date - but need to generalize this somehow for other plugins.
 
 = 0.1 =
 

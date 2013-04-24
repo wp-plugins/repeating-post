@@ -3,7 +3,7 @@
 Plugin Name: Repeating Posts
 Plugin URI: http://shynnergy.com
 Description: Schedules repeating posts.
-Version: 0.1
+Version: 0.2
 Author: Chris Yeoh
 Author URI: http://shynnergy.com
 License: GPL2
