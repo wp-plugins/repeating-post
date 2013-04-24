@@ -18,6 +18,8 @@ Allows admins to take an existing post (aka template), and create clones of it f
 
 For example, a book club blog could have a post titled - "Team Leaders' Monthly Meeting".  In just one click, the admin could schedule a clone of that post to run every 30 days from January through December.
 
+After installing, find your post template, click on edit and **scroll to the very bottom of the edit post page** to find Repeating Post.
+
 == Installation ==
 
 1. Upload files to the `/wp-content/plugins/` directory
@@ -33,7 +35,9 @@ However, since the posts are scheduled to be published in advance, you can then 
 
 == Screenshots ==
 
-1. None
+1. Scoll to the bottom of the edit post page to get to repeating post
+
+2. Date picker!  You picker you!
 
 == Changelog ==
 
@@ -46,9 +50,4 @@ Initial Version
 = 0.1 =
 
 None
-
-== Arbitrary section ==
-
-
-== A brief Markdown Example ==
 
